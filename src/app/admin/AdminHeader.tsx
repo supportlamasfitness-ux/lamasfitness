@@ -24,6 +24,9 @@ export default function AdminHeader() {
           <a href="/admin/clientes" className="text-sm text-neutral-300 hover:text-amber-400">
             Clientes
           </a>
+          <a href="/admin/contactos" className="text-sm text-neutral-300 hover:text-amber-400">
+            Contactos
+          </a>
           <button
             onClick={handleLogout}
             className="rounded-full border border-white/15 px-4 py-1.5 text-sm font-medium text-neutral-300 transition-colors hover:border-amber-400 hover:text-amber-400"

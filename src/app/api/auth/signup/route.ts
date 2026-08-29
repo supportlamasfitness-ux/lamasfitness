@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { addContact } from "@/lib/marketing";
 
 // Registro público de clientes — sin aprobación del admin. A propósito NO
 // verifica que quien llama sea admin (es el flujo de "creá tu cuenta" desde
@@ -35,6 +36,8 @@ export async function POST(request: Request) {
       : createError?.message || "No se pudo crear la cuenta";
     return NextResponse.json({ error: msg }, { status: 400 });
   }
+
+  await addContact({ email, full_name, source: "client_signup" });
 
   return NextResponse.json({ ok: true });
 }

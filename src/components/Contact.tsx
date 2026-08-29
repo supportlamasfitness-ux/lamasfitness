@@ -1,9 +1,59 @@
+"use client";
+
+import { useState } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 const WHATSAPP_NUMBER = "15123510364";
 const WHATSAPP_MESSAGE = encodeURIComponent(
   "Hola, quiero más información sobre las clases presenciales."
 );
+
+function NewsletterForm() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("loading");
+    const res = await fetch("/api/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    setStatus(res.ok ? "done" : "error");
+  }
+
+  if (status === "done") {
+    return (
+      <p className="text-sm text-emerald-400">
+        ✓ Listo, revisá tu correo — te vas a mantener al tanto de tips y promociones.
+      </p>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-2 sm:flex-row">
+      <input
+        type="email"
+        required
+        placeholder="tu@email.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="flex-1 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:border-amber-400"
+      />
+      <button
+        type="submit"
+        disabled={status === "loading"}
+        className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-neutral-100 transition-colors hover:border-amber-400 hover:text-amber-400 disabled:opacity-60"
+      >
+        {status === "loading" ? "..." : "Recibir tips"}
+      </button>
+      {status === "error" && (
+        <p className="text-xs text-red-400 sm:absolute sm:mt-9">Algo falló, probá de nuevo.</p>
+      )}
+    </form>
+  );
+}
 
 export default function Contact() {
   return (
@@ -38,6 +88,15 @@ export default function Contact() {
           <div className="mt-4 flex flex-col items-center gap-1 text-sm text-neutral-500">
             <span>📍 Austin, TX</span>
             <span>📞 +1 (512) 351-0364</span>
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal delay={520}>
+          <div className="mt-10 flex w-full flex-col items-center gap-3 border-t border-white/10 pt-10">
+            <p className="text-sm text-neutral-400">
+              ¿Todavía no querés reservar? Recibí tips de entrenamiento y nutrición por email.
+            </p>
+            <NewsletterForm />
           </div>
         </ScrollReveal>
       </div>
