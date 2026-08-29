@@ -17,9 +17,23 @@ create table if not exists profiles (
 
 alter table profiles enable row level security;
 
--- Cada usuario puede leer su propia fila. Es la base que hace que el check
--- de "soy admin" de abajo no caiga en recursión infinita (la subconsulta
--- resuelve por esta policy, no por la de admin).
+-- Chequea "¿el usuario logueado es admin?" sin volver a disparar las
+-- policies de select sobre profiles — security definer corre con los
+-- privilegios del dueño de la función (se salta RLS), así se evita la
+-- recursión infinita que da un subquery directo a profiles dentro de su
+-- propia policy (error real de Postgres: "infinite recursion detected in
+-- policy for relation profiles", visto al probar el login del admin).
+create or replace function is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (select 1 from profiles where id = auth.uid() and role = 'admin');
+$$;
+
+-- Cada usuario puede leer su propia fila.
 drop policy if exists "profiles_select_own" on profiles;
 create policy "profiles_select_own" on profiles for select
 using (auth.uid() = id);
@@ -27,16 +41,12 @@ using (auth.uid() = id);
 -- Un admin puede leer todas las filas (lista de clientes en /admin).
 drop policy if exists "profiles_select_admin" on profiles;
 create policy "profiles_select_admin" on profiles for select
-using (
-  exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
-);
+using (is_admin());
 
 -- Un admin puede actualizar cualquier fila (editar cliente más adelante).
 drop policy if exists "profiles_update_admin" on profiles;
 create policy "profiles_update_admin" on profiles for update
-using (
-  exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
-);
+using (is_admin());
 
 -- Nota: el INSERT de clientes nuevos se hace desde /api/admin/clients con la
 -- service_role key (se salta RLS a propósito) — no hace falta policy de
