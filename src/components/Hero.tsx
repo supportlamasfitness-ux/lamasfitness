@@ -10,8 +10,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.18),_transparent_55%)]" />
       <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-7 px-6 py-28 md:py-36">
         <ScrollReveal delay={100}>
-          <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-amber-400">
-            Entrenamiento personal presencial · Austin, TX
+          <span className="inline-flex max-w-full items-center whitespace-nowrap rounded-full border border-amber-400/40 bg-amber-400/10 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-amber-400 sm:px-4 sm:text-xs sm:tracking-widest">
+            Entrenamiento personal presencial
+            <span className="hidden sm:inline">&nbsp;· Austin, TX</span>
           </span>
         </ScrollReveal>
         <ScrollReveal delay={220}>

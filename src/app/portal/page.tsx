@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { getFoodVisual } from "@/data/foods";
 import {
   EXERCISES_DB,
@@ -248,9 +250,31 @@ function WeightChart() {
 }
 
 export default function PortalPage() {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>("Resumen");
   const [activeDay, setActiveDay] = useState(workoutPlan[0].day);
   const [exerciseCategory, setExerciseCategory] = useState<string>("todos");
+  const [clientName, setClientName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
+      setClientName(profile?.full_name || user.email || "Cliente");
+    });
+  }, []);
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
 
   const macroTotals = meals.reduce(
     (acc, m) =>
@@ -274,19 +298,28 @@ export default function PortalPage() {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div>
             <p className="text-sm font-bold tracking-tight">Portal de Alberto Lamas</p>
-            <p className="text-xs text-neutral-500">Plan asignado — vista de cliente (maqueta)</p>
+            <p className="text-xs text-neutral-500">Plan asignado — contenido de ejemplo, pendiente de asignación real</p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-neutral-300 sm:inline">Cliente Ejemplo</span>
+            <span className="hidden text-sm text-neutral-300 sm:inline">
+              {clientName || "Cargando…"}
+            </span>
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-400 text-sm font-bold text-neutral-950">
-              CE
+              {clientName
+                ? clientName
+                    .split(" ")
+                    .map((p) => p[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()
+                : "…"}
             </div>
-            <a
-              href="/"
+            <button
+              onClick={handleLogout}
               className="rounded-full border border-white/15 px-4 py-1.5 text-sm font-medium text-neutral-300 transition-colors hover:border-amber-400 hover:text-amber-400"
             >
               Salir
-            </a>
+            </button>
           </div>
         </div>
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-6 pb-2 text-sm">

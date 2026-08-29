@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Next.js 16 renombró middleware.ts -> proxy.ts (mismo comportamiento,
 // export distinto). Refresca la sesión de Supabase en cada request y
-// protege /admin: sin sesión o sin rol admin -> redirige a /login.
+// protege /admin (solo rol admin) y /portal (cualquier usuario logueado,
+// admin o client) -> sin sesión válida, redirige a /login.
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -30,7 +31,9 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (request.nextUrl.pathname.startsWith("/admin")) {
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/admin")) {
     if (!user) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
@@ -44,9 +47,13 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  if (pathname.startsWith("/portal") && !user) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   return response;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/portal/:path*"],
 };
