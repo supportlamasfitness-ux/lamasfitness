@@ -23,6 +23,7 @@ const { data: created, error: createError } = await admin.auth.admin.createUser(
   email: ADMIN_EMAIL,
   password: ADMIN_PASSWORD,
   email_confirm: true,
+  user_metadata: { full_name: ADMIN_NAME || "Alberto Lamas" },
 });
 
 if (createError || !created.user) {
@@ -30,15 +31,15 @@ if (createError || !created.user) {
   process.exit(1);
 }
 
-const { error: profileError } = await admin.from("profiles").insert({
-  id: created.user.id,
-  role: "admin",
-  full_name: ADMIN_NAME || "Alberto Lamas",
-  email: ADMIN_EMAIL,
-});
+// El trigger on_auth_user_created (schema_v2_signup_trigger.sql) ya creó la
+// fila en profiles con role='client' por defecto — acá la subimos a admin.
+const { error: profileError } = await admin
+  .from("profiles")
+  .update({ role: "admin" })
+  .eq("id", created.user.id);
 
 if (profileError) {
-  console.error("Usuario creado pero falló el perfil:", profileError.message);
+  console.error("Usuario creado pero falló el update de rol:", profileError.message);
   process.exit(1);
 }
 

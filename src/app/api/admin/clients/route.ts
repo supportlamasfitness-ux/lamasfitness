@@ -41,30 +41,20 @@ export async function POST(request: Request) {
   const admin = createAdminClient();
   const tempPassword = randomPassword();
 
+  // profiles ya no se inserta acá — el trigger on_auth_user_created (ver
+  // schema_v2_signup_trigger.sql) crea la fila solo, con role='client'
+  // fijo, leyendo full_name/phone del metadata que mandamos abajo.
   const { data: created, error: createError } = await admin.auth.admin.createUser({
     email,
     password: tempPassword,
     email_confirm: true,
+    user_metadata: { full_name, phone },
   });
   if (createError || !created.user) {
     return NextResponse.json(
       { error: createError?.message || "No se pudo crear la cuenta" },
       { status: 400 }
     );
-  }
-
-  const { error: profileError } = await admin.from("profiles").insert({
-    id: created.user.id,
-    role: "client",
-    full_name,
-    email,
-    phone,
-  });
-  if (profileError) {
-    // Revertir la cuenta de Auth huérfana si el insert del perfil falla —
-    // si no, queda un usuario sin fila en profiles que rompe el login.
-    await admin.auth.admin.deleteUser(created.user.id);
-    return NextResponse.json({ error: profileError.message }, { status: 400 });
   }
 
   return NextResponse.json({
