@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 // Precios reales del tarifario de Alberto (Tarifario de plan de entrenamiento.xlsx):
 // sesiones de 1h, membresía de 3 o 6 meses, facturado mensual. El plan de 6 meses
@@ -28,32 +29,36 @@ export default function Services() {
   return (
     <section id="servicios" className="border-b border-white/10 bg-neutral-900/40">
       <div className="mx-auto max-w-6xl px-6 py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-            Clases presenciales
-          </h2>
-          <p className="mt-4 text-neutral-300">
-            Elige cuántas sesiones por semana necesitás y el tiempo de
-            membresía. Todas las clases son presenciales, de 1 hora, con
-            seguimiento personalizado.
-          </p>
-        </div>
+        <ScrollReveal>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+              Clases presenciales
+            </h2>
+            <p className="mt-4 text-neutral-300">
+              Elige cuántas sesiones por semana necesitás y el tiempo de
+              membresía. Todas las clases son presenciales, de 1 hora, con
+              seguimiento personalizado.
+            </p>
+          </div>
+        </ScrollReveal>
 
-        <div className="mx-auto mt-10 flex w-fit gap-1 rounded-full border border-white/10 bg-neutral-950 p-1">
-          {([3, 6] as Duration[]).map((d) => (
-            <button
-              key={d}
-              onClick={() => setDuration(d)}
-              className={`rounded-full px-6 py-2 text-sm font-semibold transition-colors ${
-                duration === d
-                  ? "bg-amber-400 text-neutral-950"
-                  : "text-neutral-400 hover:text-neutral-100"
-              }`}
-            >
-              Membresía {d} meses
-            </button>
-          ))}
-        </div>
+        <ScrollReveal delay={120} from="scale">
+          <div className="mx-auto mt-10 flex w-fit gap-1 rounded-full border border-white/10 bg-neutral-950 p-1">
+            {([3, 6] as Duration[]).map((d) => (
+              <button
+                key={d}
+                onClick={() => setDuration(d)}
+                className={`rounded-full px-6 py-2 text-sm font-semibold transition-colors ${
+                  duration === d
+                    ? "bg-amber-400 text-neutral-950"
+                    : "text-neutral-400 hover:text-neutral-100"
+                }`}
+              >
+                Membresía {d} meses
+              </button>
+            ))}
+          </div>
+        </ScrollReveal>
 
         <div className="mx-auto mt-10 grid max-w-3xl gap-8 sm:grid-cols-2">
           {PLANS[duration].map((plan, i) => {
@@ -63,8 +68,8 @@ export default function Services() {
                 : 0;
             const highlighted = plan.sessions === 3;
             return (
+              <ScrollReveal key={plan.sessions} delay={i * 100} from="scale">
               <div
-                key={plan.sessions}
                 className={`flex flex-col rounded-2xl border p-8 ${
                   highlighted
                     ? "border-amber-400 bg-neutral-900 shadow-lg shadow-amber-400/10"
@@ -126,17 +131,20 @@ export default function Services() {
                   Quiero este plan
                 </a>
               </div>
+              </ScrollReveal>
             );
           })}
         </div>
 
-        <p className="mx-auto mt-8 max-w-md text-center text-sm text-neutral-500">
-          ¿Querés probar una clase suelta antes de elegir plan?{" "}
-          <a href="#contacto" className="text-amber-400 hover:underline">
-            Escríbeme por WhatsApp
-          </a>
-          .
-        </p>
+        <ScrollReveal delay={200}>
+          <p className="mx-auto mt-8 max-w-md text-center text-sm text-neutral-500">
+            ¿Querés probar una clase suelta antes de elegir plan?{" "}
+            <a href="#contacto" className="text-amber-400 hover:underline">
+              Escríbeme por WhatsApp
+            </a>
+            .
+          </p>
+        </ScrollReveal>
       </div>
     </section>
   );
