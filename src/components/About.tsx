@@ -9,10 +9,10 @@ const highlights = [
 
 export default function About() {
   return (
-    <section id="sobre-mi" className="border-b border-white/10 bg-neutral-950">
-      <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center">
+    <section id="sobre-mi" className="bg-white">
+      <div className="mx-auto grid max-w-6xl gap-14 px-6 py-24 md:grid-cols-2 md:items-center">
         <ScrollReveal from="left">
-          <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 md:aspect-[4/5]">
+          <div className="relative aspect-square w-full overflow-hidden rounded-3xl shadow-2xl shadow-neutral-900/10 md:aspect-[4/5]">
             <Image
               src="/images/alberto-hero.jpg"
               alt="Alberto Lamas, entrenador personal"
@@ -25,28 +25,31 @@ export default function About() {
         </ScrollReveal>
         <ScrollReveal from="right">
           <div className="flex flex-col gap-6">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Sobre mí
+            <span className="eyebrow text-amber-600">Sobre mí</span>
+            <h2 className="text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl">
+              Un entrenador, un plan, un compromiso
             </h2>
-            <p className="text-neutral-300">
+            <p className="text-neutral-600">
               Soy entrenador personal certificado y llevo años ayudando a
               personas a mejorar su condición física en clases presenciales.
               Mi enfoque combina técnica, constancia y un acompañamiento
               cercano para que cada sesión te acerque a tu objetivo, sin
               importar tu punto de partida.
             </p>
-            <p className="text-neutral-300">
+            <p className="text-neutral-600">
               Trabajo contigo de forma individual o en grupos reducidos,
               adaptando cada clase a tu nivel, tus tiempos y tus metas.
             </p>
-            <div className="mt-2 grid grid-cols-3 gap-4">
+            <div className="mt-2 grid grid-cols-3 gap-4 border-t border-neutral-200 pt-6">
               {highlights.map((item, i) => (
                 <ScrollReveal key={item.label} delay={i * 140} from="scale">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-amber-400">
+                    <p className="text-3xl font-extrabold text-amber-600">
                       {item.value}
                     </p>
-                    <p className="text-xs text-neutral-400">{item.label}</p>
+                    <p className="mt-1 text-xs font-medium text-neutral-500">
+                      {item.label}
+                    </p>
                   </div>
                 </ScrollReveal>
               ))}
