@@ -43,6 +43,16 @@ export default function ClientesPage() {
     loadClients();
   }, []);
 
+  const [resetInfo, setResetInfo] = useState<{ email: string; tempPassword: string } | null>(null);
+
+  async function resetPassword(c: Client) {
+    if (!confirm(`¿Generar una contraseña temporal para ${c.full_name}? La actual dejará de funcionar.`)) return;
+    const res = await fetch(`/api/admin/clients/${c.id}/reset-password`, { method: "POST" });
+    const data = await res.json();
+    if (!res.ok) return setError(data.error || "No se pudo restablecer");
+    setResetInfo({ email: data.email, tempPassword: data.tempPassword });
+  }
+
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -102,6 +112,15 @@ export default function ClientesPage() {
           <Link href={`/admin/clientes/${lastCreated.id}`} className="mt-3 inline-block rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-500">
             Asignar su plan ahora
           </Link>
+        </div>
+      )}
+
+      {resetInfo && (
+        <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/5 p-5 text-sm">
+          <p className="font-semibold text-emerald-400">Contraseña temporal — compártela por WhatsApp:</p>
+          <p className="mt-2 text-neutral-300">Email: <span className="font-mono text-neutral-100">{resetInfo.email}</span></p>
+          <p className="text-neutral-300">Contraseña: <span className="font-mono text-neutral-100">{resetInfo.tempPassword}</span></p>
+          <p className="mt-2 text-xs text-neutral-500">No se vuelve a mostrar. El cliente puede cambiarla después con "¿Olvidaste tu contraseña?".</p>
         </div>
       )}
 
@@ -191,6 +210,9 @@ export default function ClientesPage() {
                     {new Date(c.created_at).toLocaleDateString("es")}
                   </td>
                   <td className="px-5 py-3 text-right">
+                    <button onClick={() => resetPassword(c)} className="mr-2 rounded-full border border-white/15 px-3 py-1.5 text-xs text-neutral-300 hover:border-red-500 hover:text-red-500">
+                      Restablecer contraseña
+                    </button>
                     <Link href={`/admin/clientes/${c.id}`} className="rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-500">
                       Asignar plan
                     </Link>
