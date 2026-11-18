@@ -507,6 +507,24 @@ export default function PortalPage() {
                                       {ex.description}
                                     </p>
                                   )}
+                                  {ex.extra_images.length > 0 && (
+                                    <div className="flex flex-col gap-2 px-4 pb-2">
+                                      {ex.extra_images.map((u, k) => (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img key={k} src={u} alt={`${ex.name} ${k + 2}`} loading="lazy" className="w-full rounded-lg bg-white" />
+                                      ))}
+                                    </div>
+                                  )}
+                                  {ex.links.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 px-4 pb-4">
+                                      {ex.links.map((l, k) => (
+                                        <a key={k} href={l.url} target="_blank" rel="noopener noreferrer"
+                                          className="rounded-full border border-red-500/40 px-3 py-1 text-xs font-semibold text-red-500 hover:bg-red-500 hover:text-white">
+                                          {l.label || "Ver enlace"} ↗
+                                        </a>
+                                      ))}
+                                    </div>
+                                  )}
                                   {ex.video_url && (
                                     <div className="px-4 pb-4">
                                       <p className="mb-2 text-xs font-bold uppercase tracking-wide text-neutral-400">Video sugerido</p>

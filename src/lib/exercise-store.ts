@@ -5,6 +5,8 @@ import { DEFAULT_DESCRIPTIONS } from "@/data/exercise-descriptions";
 export type Exercise = ExerciseDef & {
   video_url: string;
   description: string;
+  extra_images: string[]; // fotos adicionales (guías, variantes)
+  links: { label: string; url: string }[]; // enlaces de referencia
   builtin: boolean; // viene incluido en la app
   edited: boolean; // tiene ajustes guardados por el admin
 };
@@ -12,6 +14,7 @@ export type Exercise = ExerciseDef & {
 type Row = {
   id: string; name: string | null; category: string | null; equipment: string | null; image: string | null;
   video_url: string | null; description: string | null; sets: string | null; is_custom: boolean;
+  extra_images?: string[] | null; links?: { label: string; url: string }[] | null;
 };
 
 // Une los ejercicios incluidos con los ajustes y los ejercicios nuevos del admin (tabla exercises_custom).
@@ -34,6 +37,8 @@ export async function loadExercises(): Promise<{ exercises: Exercise[]; missing:
       image: r?.image || b.image,
       sets: r?.sets || b.sets,
       video_url: r?.video_url || "",
+      extra_images: r?.extra_images || [],
+      links: r?.links || [],
       description: r?.description || oldNotes.get(b.id) || DEFAULT_DESCRIPTIONS[b.id] || "",
       builtin: true,
       edited: !!r,
@@ -45,6 +50,7 @@ export async function loadExercises(): Promise<{ exercises: Exercise[]; missing:
       id: r.id, name: r.name || "Ejercicio", category: (r.category as Exercise["category"]) || "pecho",
       equipment: r.equipment || "", image: r.image || undefined, sets: r.sets || undefined,
       video_url: r.video_url || "", description: r.description || "", builtin: false, edited: true,
+      extra_images: r.extra_images || [], links: r.links || [],
     });
   }
   return { exercises: out, missing: !!error };
@@ -60,4 +66,22 @@ export function videoEmbed(url: string): { kind: "iframe" | "file"; src: string 
   if (vm) return { kind: "iframe", src: `https://player.vimeo.com/video/${vm[1]}` };
   if (/\.(mp4|webm|mov)(\?|$)/i.test(u)) return { kind: "file", src: u };
   return null;
+}
+
+// Guarda (crea o actualiza) un ejercicio completo en exercises_custom.
+export async function saveExercise(d: Exercise): Promise<string | null> {
+  const full = {
+    id: d.id, name: d.name, category: d.category, equipment: d.equipment, image: d.image || "",
+    video_url: d.video_url, description: d.description, sets: d.sets || "", is_custom: !d.builtin,
+    extra_images: d.extra_images, links: d.links.filter((l) => l.url.trim()), updated_at: new Date().toISOString(),
+  };
+  const supabase = createClient();
+  let { error } = await supabase.from("exercises_custom").upsert(full);
+  if (error && /extra_images|links/.test(error.message)) {
+    // Falta el schema_v9: se guarda sin los campos nuevos y se avisa
+    const { extra_images: _a, links: _b, ...base } = full; // eslint-disable-line @typescript-eslint/no-unused-vars
+    ({ error } = await supabase.from("exercises_custom").upsert(base));
+    return error ? error.message : "Guardado, pero las fotos extra y enlaces necesitan ejecutar supabase/schema_v9_exercise_extras.sql";
+  }
+  return error ? error.message : null;
 }

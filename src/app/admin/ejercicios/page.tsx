@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { CATEGORY_LABEL, type ExerciseCategory } from "@/data/exercises";
-import { loadExercises, type Exercise } from "@/lib/exercise-store";
+import { loadExercises, saveExercise, type Exercise } from "@/lib/exercise-store";
+import GuideCropper from "@/components/admin/GuideCropper";
 import ImagePick from "@/components/admin/ImagePick";
 import VideoEmbed from "@/components/VideoEmbed";
 
@@ -17,14 +18,10 @@ function Card({ ex, onSaved, onRemoved }: { ex: Exercise; onSaved: (e: Exercise)
 
   async function save() {
     setMsg("Guardando…");
-    const { error } = await createClient().from("exercises_custom").upsert({
-      id: d.id, name: d.name, category: d.category, equipment: d.equipment, image: d.image || "",
-      video_url: d.video_url, description: d.description, sets: d.sets || "", is_custom: !d.builtin,
-      updated_at: new Date().toISOString(),
-    });
-    if (error) return setMsg(error.message);
+    const err = await saveExercise(d);
+    if (err && !err.startsWith("Guardado")) return setMsg(err);
     onSaved({ ...d, edited: true });
-    setMsg("Guardado ✓");
+    setMsg(err || "Guardado ✓");
   }
 
   async function remove() {
@@ -56,6 +53,31 @@ function Card({ ex, onSaved, onRemoved }: { ex: Exercise; onSaved: (e: Exercise)
       <div className="flex flex-col gap-2">
         <input className={input} placeholder="Enlace de video sugerido (YouTube, Vimeo o .mp4)" value={d.video_url} onChange={(e) => set("video_url", e.target.value)} />
         {d.video_url && <div className="max-w-md"><VideoEmbed url={d.video_url} /></div>}
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-bold uppercase tracking-wide text-neutral-500">Fotos extra</p>
+        <div className="flex flex-wrap items-center gap-3">
+          {d.extra_images.map((u, i) => (
+            <div key={i} className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={u} alt="" className="h-20 w-28 rounded-lg bg-white object-cover" />
+              <button type="button" aria-label="Quitar foto" onClick={() => set("extra_images", d.extra_images.filter((_, k) => k !== i))}
+                className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-neutral-950 text-xs text-neutral-300 ring-1 ring-white/20 hover:text-red-500">✕</button>
+            </div>
+          ))}
+          <ImagePick key={d.extra_images.length} value="" onChange={(u) => u && set("extra_images", [...d.extra_images, u])} />
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-bold uppercase tracking-wide text-neutral-500">Enlaces de referencia</p>
+        {d.links.map((l, i) => (
+          <div key={i} className="flex flex-wrap gap-2">
+            <input className={`${input} w-44`} placeholder="Texto (ej. Técnica completa)" value={l.label} onChange={(e) => set("links", d.links.map((x, k) => (k === i ? { ...x, label: e.target.value } : x)))} />
+            <input className={`${input} min-w-[200px] flex-1`} placeholder="https://…" value={l.url} onChange={(e) => set("links", d.links.map((x, k) => (k === i ? { ...x, url: e.target.value } : x)))} />
+            <button type="button" aria-label="Quitar enlace" className="text-neutral-500 hover:text-red-500" onClick={() => set("links", d.links.filter((_, k) => k !== i))}>✕</button>
+          </div>
+        ))}
+        <button type="button" onClick={() => set("links", [...d.links, { label: "", url: "" }])} className="w-fit rounded-full border border-white/15 px-3 py-1 text-xs text-neutral-300 hover:border-red-500 hover:text-red-500">+ Agregar enlace</button>
       </div>
       <div className="flex items-center gap-3">
         <button onClick={save} disabled={!dirty || !d.name.trim()} className="rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-500 disabled:opacity-40">Guardar</button>
@@ -123,6 +145,8 @@ export default function EjerciciosPage() {
         <button onClick={add} disabled={missing} className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-50">+ Nuevo ejercicio</button>
         {err && <span className="ml-3 text-sm text-red-400">{err}</span>}
       </div>
+      <GuideCropper exercises={list} onApplied={() => reload()} />
+
       <div className="flex flex-col gap-4">
         {loading ? <p className="text-sm text-neutral-500">Cargando…</p> : shown.map((e) => (
           <Card key={e.id + (e.edited ? "e" : "")} ex={e}
