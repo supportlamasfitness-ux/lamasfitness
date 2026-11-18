@@ -4,6 +4,8 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { EXERCISES_DB, CATEGORY_LABEL, getExercise } from "@/data/exercises";
 import { emptyPlan, emptyMedicion, MEDIDAS, type Plan } from "@/lib/plan";
+import ImagePick from "@/components/admin/ImagePick";
+import { getFoodImage } from "@/data/foods";
 
 const TABS = ["Resumen", "Dieta", "Entrenamiento", "Suplementos", "Lista de mercado"] as const;
 type Tab = (typeof TABS)[number];
@@ -164,15 +166,22 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
                   </div>
                 )}
                 {m.items.map((it, ii) => (
-                  <div key={ii} className="grid grid-cols-2 gap-2 sm:grid-cols-[1fr_70px_70px_70px_70px_32px]">
-                    <input className={`${input} col-span-2 sm:col-span-1`} placeholder="ej. 6 oz pechuga de pollo" value={it.food}
-                      onChange={(e) => edit((p) => { p.dieta.meals[mi].items[ii].food = e.target.value; })} />
-                    {(["kcal", "protein", "carbs", "fat"] as const).map((f) => (
-                      <input key={f} className={input} inputMode="decimal" placeholder={f} value={it[f] || ""}
-                        onChange={(e) => edit((p) => { p.dieta.meals[mi].items[ii][f] = num(e.target.value); })} />
-                    ))}
-                    <button className="text-neutral-500 hover:text-red-500" aria-label="Quitar alimento"
-                      onClick={() => edit((p) => { p.dieta.meals[mi].items.splice(ii, 1); })}>✕</button>
+                  <div key={ii} className="flex flex-col gap-2 rounded-xl border border-white/5 p-2">
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-[1fr_70px_70px_70px_70px_32px]">
+                      <input className={`${input} col-span-2 sm:col-span-1`} placeholder="ej. 6 oz pechuga de pollo" value={it.food}
+                        onChange={(e) => edit((p) => { p.dieta.meals[mi].items[ii].food = e.target.value; })} />
+                      {(["kcal", "protein", "carbs", "fat"] as const).map((f) => (
+                        <input key={f} className={input} inputMode="decimal" placeholder={f} value={it[f] || ""}
+                          onChange={(e) => edit((p) => { p.dieta.meals[mi].items[ii][f] = num(e.target.value); })} />
+                      ))}
+                      <button className="text-neutral-500 hover:text-red-500" aria-label="Quitar alimento"
+                        onClick={() => edit((p) => { p.dieta.meals[mi].items.splice(ii, 1); })}>✕</button>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <ImagePick value={it.image} auto={getFoodImage(it.food)} onChange={(u) => edit((p) => { p.dieta.meals[mi].items[ii].image = u; })} />
+                      <input className={`${input} min-w-[200px] flex-1`} placeholder="Enlace de compra (opcional)" value={it.url || ""}
+                        onChange={(e) => edit((p) => { p.dieta.meals[mi].items[ii].url = e.target.value; })} />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -254,7 +263,12 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
                 <input key={k} className={input} placeholder={ph} value={s[k]}
                   onChange={(e) => edit((p) => { p.suplementos[si][k] = e.target.value; })} />
               ))}
-              <button className={`${small} w-fit`} onClick={() => edit((p) => { p.suplementos.splice(si, 1); })}>Quitar</button>
+              <input className={`${input} sm:col-span-2`} placeholder="Enlace de compra (opcional)" value={s.url || ""}
+                onChange={(e) => edit((p) => { p.suplementos[si].url = e.target.value; })} />
+              <div className="flex items-center justify-between sm:col-span-2">
+                <ImagePick value={s.image} onChange={(u) => edit((p) => { p.suplementos[si].image = u; })} />
+                <button className={small} onClick={() => edit((p) => { p.suplementos.splice(si, 1); })}>Quitar suplemento</button>
+              </div>
             </div>
           ))}
           <button className={`${small} w-fit`}
@@ -273,8 +287,20 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
                   onChange={(e) => edit((p) => { p.mercado[gi].category = e.target.value; })} />
                 <button className={small} onClick={() => edit((p) => { p.mercado.splice(gi, 1); })}>Quitar</button>
               </div>
-              <textarea rows={4} className={`${input} w-full`} placeholder="Un producto por línea" value={g.items.join("\n")}
-                onChange={(e) => edit((p) => { p.mercado[gi].items = e.target.value.split("\n"); })} />
+              <div className="flex flex-col gap-2">
+                {g.items.map((it, ii) => (
+                  <div key={ii} className="flex flex-wrap items-center gap-3 rounded-xl border border-white/5 p-2">
+                    <ImagePick value={it.image} auto={getFoodImage(it.name)} onChange={(u) => edit((p) => { p.mercado[gi].items[ii].image = u; })} />
+                    <input className={`${input} min-w-[160px] flex-1`} placeholder="Producto (ej. Pechuga de pollo)" value={it.name}
+                      onChange={(e) => edit((p) => { p.mercado[gi].items[ii].name = e.target.value; })} />
+                    <input className={`${input} min-w-[200px] flex-[2]`} placeholder="Enlace de compra (Amazon, Walmart…)" value={it.url || ""}
+                      onChange={(e) => edit((p) => { p.mercado[gi].items[ii].url = e.target.value; })} />
+                    <button className="text-neutral-500 hover:text-red-500" aria-label="Quitar producto"
+                      onClick={() => edit((p) => { p.mercado[gi].items.splice(ii, 1); })}>✕</button>
+                  </div>
+                ))}
+              </div>
+              <button className={`${small} mt-3`} onClick={() => edit((p) => { p.mercado[gi].items.push({ name: "", url: "" }); })}>+ Producto</button>
             </div>
           ))}
           <button className={`${small} w-fit`}

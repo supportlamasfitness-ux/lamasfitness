@@ -5,10 +5,20 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getFoodVisual, getFoodImage } from "@/data/foods";
 import { CATEGORY_ICON, getExercise } from "@/data/exercises";
-import { normalizePlan, emptyPlan, MEDIDAS, type Plan } from "@/lib/plan";
+import { normalizePlan, emptyPlan, MEDIDAS, linkLabel, type Plan } from "@/lib/plan";
+import { DEFAULT_DESCRIPTIONS } from "@/data/exercise-descriptions";
 
 const tabs = ["Resumen", "Dieta", "Entrenamiento", "Suplementos", "Lista de mercado"] as const;
 type Tab = (typeof tabs)[number];
+
+function BuyLink({ url }: { url: string }) {
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer sponsored"
+      className="ml-1 inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-red-500/40 px-2.5 py-0.5 text-xs font-semibold text-red-500 hover:bg-red-500 hover:text-white">
+      🛒 {linkLabel(url)}
+    </a>
+  );
+}
 
 function MacroPill({ label, value }: { label: string; value: number }) {
   return (
@@ -18,8 +28,8 @@ function MacroPill({ label, value }: { label: string; value: number }) {
   );
 }
 
-function FoodIcon({ name }: { name: string }) {
-  const img = getFoodImage(name);
+function FoodIcon({ name, image }: { name: string; image?: string }) {
+  const img = image || getFoodImage(name);
   if (img) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={img} alt={name} loading="lazy" className="h-10 w-10 shrink-0 rounded-lg bg-neutral-100 object-contain p-0.5" />;
@@ -144,6 +154,7 @@ export default function PortalPage() {
   const [planLoaded, setPlanLoaded] = useState(false);
   const [activeDay, setActiveDay] = useState("Lunes");
   const [openEx, setOpenEx] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Record<string, string>>({});
   const [clientName, setClientName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -165,6 +176,9 @@ export default function PortalPage() {
       const p = normalizePlan(row?.data);
       setPlan(p);
       setActiveDay((p.entrenamiento.find((d) => d.focus || d.exercises.length)?.day) || "Lunes");
+      // Descripciones editadas por el admin (si la tabla aún no existe, se usan las de por defecto)
+      const { data: nrows } = await supabase.from("exercise_notes").select("exercise_id, description");
+      if (nrows) setNotes(Object.fromEntries(nrows.map((r) => [r.exercise_id, r.description])));
       setPlanLoaded(true);
     });
   }, []);
@@ -180,7 +194,7 @@ export default function PortalPage() {
   const reminders = plan.dieta.reminders;
   const workoutPlan = plan.entrenamiento;
   const supplements = plan.suplementos;
-  const groceryList = plan.mercado.filter((g) => g.category || g.items.some((i) => i.trim()));
+  const groceryList = plan.mercado.filter((g) => g.category || g.items.some((i) => i.name || i.url));
   const num = (v: string) => parseFloat((v || "").replace(",", "."));
   const withWeight = plan.mediciones.filter((m) => !Number.isNaN(num(m.peso)));
   const weightTrend = withWeight.map((m) => ({ label: m.fecha.slice(8, 10) + "/" + m.fecha.slice(5, 7), kg: num(m.peso) }));
@@ -384,8 +398,11 @@ export default function PortalPage() {
                           className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-3 last:border-0 last:pb-0"
                         >
                           <span className="flex items-center gap-3">
-                            <FoodIcon name={i.food} />
-                            {i.food}
+                            <FoodIcon name={i.food} image={i.image} />
+                            <span>
+                              {i.food}
+                              {i.url && <span className="mt-1 block"><BuyLink url={i.url} /></span>}
+                            </span>
                           </span>
                           <span className="flex gap-1.5">
                             <MacroPill label="P" value={i.protein} />
@@ -468,14 +485,23 @@ export default function PortalPage() {
                                 <span className="flex-1">
                                   <span className="block">{ex.name}</span>
                                   <span className="text-xs text-neutral-500">
-                                    {ex.equipment}{ex.image && <span className="text-red-500"> · {open ? "ocultar" : "ver cómo se hace"}</span>}
+                                    {ex.equipment}<span className="text-red-500"> · {open ? "ocultar" : "ver cómo se hace"}</span>
                                   </span>
                                 </span>
                                 <span className="font-semibold text-red-500">{de.sets}</span>
                               </button>
-                              {open && ex.image && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={ex.image} alt={`Cómo hacer ${ex.name}`} className="w-full bg-white" />
+                              {open && (
+                                <div className="border-t border-white/10">
+                                  {ex.image && (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={ex.image} alt={`Cómo hacer ${ex.name}`} className="w-full bg-white" />
+                                  )}
+                                  {(notes[de.exerciseId] || DEFAULT_DESCRIPTIONS[de.exerciseId]) && (
+                                    <p className="whitespace-pre-line px-4 py-4 text-sm leading-relaxed text-neutral-300">
+                                      {notes[de.exerciseId] || DEFAULT_DESCRIPTIONS[de.exerciseId]}
+                                    </p>
+                                  )}
+                                </div>
                               )}
                             </div>
                           );
@@ -505,10 +531,16 @@ export default function PortalPage() {
                   <tr key={s.name} className="border-b border-white/5 last:border-0">
                     <td className="px-5 py-3 font-medium">
                       <span className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-500/10 text-base">
-                          💊
+                        {s.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={s.image} alt={s.name} loading="lazy" className="h-12 w-12 shrink-0 rounded-lg bg-neutral-100 object-contain p-0.5" />
+                        ) : (
+                          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-base">💊</span>
+                        )}
+                        <span>
+                          {s.name}
+                          {s.url && <span className="mt-1 block"><BuyLink url={s.url} /></span>}
                         </span>
-                        {s.name}
                       </span>
                     </td>
                     <td className="px-5 py-3 text-neutral-300">{s.dose}</td>
@@ -529,10 +561,13 @@ export default function PortalPage() {
                   <div key={g.category} className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
                     <h3 className="mb-3 font-bold text-red-500">{g.category}</h3>
                     <ul className="flex flex-col gap-2 text-sm text-neutral-300">
-                      {g.items.filter((i) => i.trim()).map((i) => (
-                        <li key={i} className="flex items-center gap-3">
-                          <FoodIcon name={i} />
-                          {i}
+                      {g.items.filter((i) => i.name || i.url).map((i, k) => (
+                        <li key={k} className="flex items-center gap-3">
+                          <FoodIcon name={i.name} image={i.image} />
+                          <span>
+                            {i.name || (i.url ? linkLabel(i.url).replace("Comprar en ", "Producto en ") : "")}
+                            {i.url && <span className="mt-1 block"><BuyLink url={i.url} /></span>}
+                          </span>
                         </li>
                       ))}
                     </ul>

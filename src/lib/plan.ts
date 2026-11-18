@@ -1,10 +1,29 @@
 // Plan que el admin asigna a cada cliente. Se guarda como un solo JSON en client_plans.data.
-export type MealItem = { food: string; kcal: number; fat: number; carbs: number; protein: number };
+// url = enlace de compra sugerido; image = foto subida por el admin (si no hay, se usa la de la biblioteca)
+export type MealItem = { food: string; kcal: number; fat: number; carbs: number; protein: number; url?: string; image?: string };
 export type Meal = { name: string; items: MealItem[] };
 export type DayExercise = { exerciseId: string; sets: string };
 export type DayPlan = { day: string; focus: string; exercises: DayExercise[] };
-export type Supplement = { name: string; dose: string; when: string; purpose: string };
-export type GroceryGroup = { category: string; items: string[] };
+export type Supplement = { name: string; dose: string; when: string; purpose: string; url?: string; image?: string };
+export type GroceryItem = { name: string; url?: string; image?: string };
+export type GroceryGroup = { category: string; items: GroceryItem[] };
+
+// Acepta el formato viejo (texto) y el nuevo (objeto). Si el nombre es un enlace, lo pasa a url.
+export function toGroceryItem(x: unknown): GroceryItem {
+  const o: GroceryItem = typeof x === "string" ? { name: x } : { ...(x as GroceryItem) };
+  o.name = String(o.name || "").trim();
+  if (/^https?:\/\//i.test(o.name)) { o.url = o.url || o.name; o.name = ""; }
+  return o;
+}
+
+export function linkLabel(url: string): string {
+  try {
+    const h = new URL(url).hostname.replace(/^www\./, "");
+    return h.includes("amazon") ? "Comprar en Amazon" : `Comprar en ${h}`;
+  } catch {
+    return "Comprar";
+  }
+}
 
 // Medición que registra el admin (en kg y cm). Con ellas se arman los datos y gráficas del resumen del cliente.
 export type Medicion = {
@@ -68,6 +87,9 @@ export function normalizePlan(raw: unknown): Plan {
       return { day, focus: d?.focus || "", exercises: Array.isArray(d?.exercises) ? d!.exercises : [] };
     }),
     suplementos: Array.isArray(r.suplementos) ? r.suplementos : [],
-    mercado: Array.isArray(r.mercado) ? r.mercado : [],
+    mercado: (Array.isArray(r.mercado) ? r.mercado : []).map((g) => ({
+      category: g?.category || "",
+      items: (Array.isArray(g?.items) ? g.items : []).map(toGroceryItem),
+    })),
   };
 }
