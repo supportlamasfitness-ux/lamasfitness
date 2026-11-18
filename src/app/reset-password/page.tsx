@@ -17,6 +17,20 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     const supabase = createClient();
+    // Enlace con el acceso en la dirección (#access_token=...&refresh_token=...): se activa la sesión a mano
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const at = hash.get("access_token");
+    const rt = hash.get("refresh_token");
+    if (at && rt) {
+      supabase.auth.setSession({ access_token: at, refresh_token: rt }).then(({ data }) => {
+        if (data.session) {
+          window.history.replaceState(null, "", window.location.pathname);
+          setReady(true);
+        }
+      });
+    } else if (hash.get("error_code") === "otp_expired") {
+      setExpired(true);
+    }
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (session && (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN" || event === "INITIAL_SESSION")) setReady(true);
     });

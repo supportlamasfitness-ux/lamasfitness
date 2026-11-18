@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { createClient as createPlainClient } from "@supabase/supabase-js";
 
 type Mode = "login" | "signup" | "recover";
 
@@ -55,7 +56,13 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     setInfo("");
-    const supabase = createClient();
+    // Flujo "implicit": el enlace del correo trae el acceso en la propia dirección, así funciona aunque se abra
+    // en otro navegador o en el celular (el flujo normal exige el mismo navegador donde se pidió).
+    const supabase = createPlainClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { flowType: "implicit", persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
+    );
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: `${window.location.origin}/reset-password`,
     });
