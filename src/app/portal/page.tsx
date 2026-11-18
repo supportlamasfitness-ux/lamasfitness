@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getFoodVisual, getFoodImage } from "@/data/foods";
-import { CATEGORY_ICON, getExercise } from "@/data/exercises";
+import { CATEGORY_ICON } from "@/data/exercises";
+import { loadExercises, type Exercise } from "@/lib/exercise-store";
+import VideoEmbed from "@/components/VideoEmbed";
 import { normalizePlan, emptyPlan, MEDIDAS, linkLabel, type Plan } from "@/lib/plan";
-import { DEFAULT_DESCRIPTIONS } from "@/data/exercise-descriptions";
 
 const tabs = ["Resumen", "Dieta", "Entrenamiento", "Suplementos", "Lista de mercado"] as const;
 type Tab = (typeof tabs)[number];
@@ -154,7 +155,8 @@ export default function PortalPage() {
   const [planLoaded, setPlanLoaded] = useState(false);
   const [activeDay, setActiveDay] = useState("Lunes");
   const [openEx, setOpenEx] = useState<string | null>(null);
-  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [exList, setExList] = useState<Exercise[]>([]);
+  const getExercise = (id: string) => exList.find((e) => e.id === id);
   const [clientName, setClientName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -176,9 +178,8 @@ export default function PortalPage() {
       const p = normalizePlan(row?.data);
       setPlan(p);
       setActiveDay((p.entrenamiento.find((d) => d.focus || d.exercises.length)?.day) || "Lunes");
-      // Descripciones editadas por el admin (si la tabla aún no existe, se usan las de por defecto)
-      const { data: nrows } = await supabase.from("exercise_notes").select("exercise_id, description");
-      if (nrows) setNotes(Object.fromEntries(nrows.map((r) => [r.exercise_id, r.description])));
+      // Ejercicios con los ajustes del admin (nombre, foto, descripción y video)
+      setExList((await loadExercises()).exercises);
       setPlanLoaded(true);
     });
   }, []);
@@ -496,10 +497,16 @@ export default function PortalPage() {
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={ex.image} alt={`Cómo hacer ${ex.name}`} className="w-full bg-white" />
                                   )}
-                                  {(notes[de.exerciseId] || DEFAULT_DESCRIPTIONS[de.exerciseId]) && (
+                                  {ex.description && (
                                     <p className="whitespace-pre-line px-4 py-4 text-sm leading-relaxed text-neutral-300">
-                                      {notes[de.exerciseId] || DEFAULT_DESCRIPTIONS[de.exerciseId]}
+                                      {ex.description}
                                     </p>
+                                  )}
+                                  {ex.video_url && (
+                                    <div className="px-4 pb-4">
+                                      <p className="mb-2 text-xs font-bold uppercase tracking-wide text-neutral-400">Video sugerido</p>
+                                      <VideoEmbed url={ex.video_url} />
+                                    </div>
                                   )}
                                 </div>
                               )}

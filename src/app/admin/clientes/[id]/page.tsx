@@ -2,7 +2,8 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { EXERCISES_DB, CATEGORY_LABEL, getExercise } from "@/data/exercises";
+import { CATEGORY_LABEL } from "@/data/exercises";
+import { loadExercises, type Exercise } from "@/lib/exercise-store";
 import { emptyPlan, emptyMedicion, MEDIDAS, type Plan } from "@/lib/plan";
 import ImagePick from "@/components/admin/ImagePick";
 import { getFoodImage } from "@/data/foods";
@@ -27,10 +28,13 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
+  const [exList, setExList] = useState<Exercise[]>([]);
+  const getExercise = (id: string) => exList.find((e) => e.id === id);
   // Ventana del catálogo: qué tipo y qué hacer con el artículo elegido
   const [picker, setPicker] = useState<{ kind: CatalogItem["kind"]; apply: (i: CatalogItem) => void } | null>(null);
 
   useEffect(() => {
+    loadExercises().then((r) => setExList(r.exercises));
     fetch(`/api/admin/clients/${id}/plan`)
       .then(async (r) => {
         const d = await r.json();
@@ -238,7 +242,7 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
                       <option value="">Elegir ejercicio…</option>
                       {Object.entries(CATEGORY_LABEL).map(([cat, label]) => (
                         <optgroup key={cat} label={label}>
-                          {EXERCISES_DB.filter((e) => e.category === cat).map((e) => (
+                          {exList.filter((e) => e.category === cat).map((e) => (
                             <option key={e.id} value={e.id}>{e.name}</option>
                           ))}
                         </optgroup>
