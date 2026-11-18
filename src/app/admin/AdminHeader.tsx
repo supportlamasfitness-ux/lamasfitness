@@ -24,6 +24,9 @@ export default function AdminHeader() {
           <a href="/admin/clientes" className="text-sm text-neutral-300 hover:text-red-500">
             Clientes
           </a>
+          <a href="/admin/catalogo" className="text-sm text-neutral-300 hover:text-red-500">
+            Catálogo
+          </a>
           <a href="/admin/ejercicios" className="text-sm text-neutral-300 hover:text-red-500">
             Ejercicios
           </a>

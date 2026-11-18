@@ -6,6 +6,8 @@ import { EXERCISES_DB, CATEGORY_LABEL, getExercise } from "@/data/exercises";
 import { emptyPlan, emptyMedicion, MEDIDAS, type Plan } from "@/lib/plan";
 import ImagePick from "@/components/admin/ImagePick";
 import { getFoodImage } from "@/data/foods";
+import CatalogPicker from "@/components/admin/CatalogPicker";
+import { type CatalogItem } from "@/lib/catalog";
 
 const TABS = ["Resumen", "Dieta", "Entrenamiento", "Suplementos", "Lista de mercado"] as const;
 type Tab = (typeof TABS)[number];
@@ -25,6 +27,8 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
+  // Ventana del catálogo: qué tipo y qué hacer con el artículo elegido
+  const [picker, setPicker] = useState<{ kind: CatalogItem["kind"]; apply: (i: CatalogItem) => void } | null>(null);
 
   useEffect(() => {
     fetch(`/api/admin/clients/${id}/plan`)
@@ -185,10 +189,16 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
                   </div>
                 ))}
               </div>
-              <button className={`${small} mt-3`}
-                onClick={() => edit((p) => { p.dieta.meals[mi].items.push({ food: "", kcal: 0, protein: 0, carbs: 0, fat: 0 }); })}>
-                + Alimento
-              </button>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button className={small}
+                  onClick={() => setPicker({ kind: "alimento", apply: (c) => edit((p) => { p.dieta.meals[mi].items.push({ food: c.name, kcal: c.kcal ?? 0, protein: c.protein ?? 0, carbs: c.carbs ?? 0, fat: c.fat ?? 0, url: c.url, image: c.image }); }) })}>
+                  + Del catálogo
+                </button>
+                <button className={small}
+                  onClick={() => edit((p) => { p.dieta.meals[mi].items.push({ food: "", kcal: 0, protein: 0, carbs: 0, fat: 0 }); })}>
+                  + Alimento nuevo
+                </button>
+              </div>
             </div>
           ))}
           <button className={`${small} w-fit`}
@@ -271,10 +281,16 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
               </div>
             </div>
           ))}
-          <button className={`${small} w-fit`}
-            onClick={() => edit((p) => { p.suplementos.push({ name: "", dose: "", when: "", purpose: "" }); })}>
-            + Agregar suplemento
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button className={small}
+              onClick={() => setPicker({ kind: "suplemento", apply: (c) => edit((p) => { p.suplementos.push({ name: c.name, dose: c.dose, when: c.when_text, purpose: c.purpose, url: c.url, image: c.image }); }) })}>
+              + Del catálogo
+            </button>
+            <button className={small}
+              onClick={() => edit((p) => { p.suplementos.push({ name: "", dose: "", when: "", purpose: "" }); })}>
+              + Suplemento nuevo
+            </button>
+          </div>
         </div>
       )}
 
@@ -300,7 +316,13 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
                   </div>
                 ))}
               </div>
-              <button className={`${small} mt-3`} onClick={() => edit((p) => { p.mercado[gi].items.push({ name: "", url: "" }); })}>+ Producto</button>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button className={small}
+                  onClick={() => setPicker({ kind: "alimento", apply: (c) => edit((p) => { p.mercado[gi].items.push({ name: c.name, url: c.url, image: c.image }); }) })}>
+                  + Del catálogo
+                </button>
+                <button className={small} onClick={() => edit((p) => { p.mercado[gi].items.push({ name: "", url: "" }); })}>+ Producto nuevo</button>
+              </div>
             </div>
           ))}
           <button className={`${small} w-fit`}
@@ -309,6 +331,8 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
           </button>
         </div>
       )}
+
+      {picker && <CatalogPicker kind={picker.kind} onPick={picker.apply} onClose={() => setPicker(null)} />}
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-neutral-950/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
