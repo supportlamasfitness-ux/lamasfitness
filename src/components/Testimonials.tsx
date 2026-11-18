@@ -4,7 +4,7 @@ const testimonials = [
   {
     name: "Nombre Apellido",
     quote:
-      "En pocos meses noté un cambio real, tanto en fuerza como en confianza. Las clases están súper bien planteadas.",
+      "En pocos meses noté un cambio real, tanto en fuerza como en confianza. El programa está súper bien planteado.",
   },
   {
     name: "Nombre Apellido",

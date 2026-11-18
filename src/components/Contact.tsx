@@ -65,7 +65,7 @@ export default function Contact() {
         </ScrollReveal>
         <ScrollReveal delay={100}>
           <h2 className="text-4xl font-extrabold tracking-tight text-white md:text-5xl">
-            Empieza hoy tu primera clase
+            Empieza hoy tu transformación
           </h2>
         </ScrollReveal>
         <ScrollReveal delay={200}>

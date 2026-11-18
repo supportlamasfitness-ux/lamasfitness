@@ -65,7 +65,7 @@ export default function Header() {
             href="#contacto"
             className="rounded-full bg-red-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-400"
           >
-            Reserva tu clase
+            Empieza ahora
           </a>
         </div>
 
@@ -114,7 +114,7 @@ export default function Header() {
               onClick={() => setOpen(false)}
               className="rounded-full bg-red-500 px-5 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-red-400"
             >
-              Reserva tu clase
+              Empieza ahora
             </a>
           </div>
         </div>
