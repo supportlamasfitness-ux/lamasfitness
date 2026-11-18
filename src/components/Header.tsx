@@ -21,7 +21,8 @@ function Logo() {
   );
 }
 
-export default function Header() {
+export default function Header({ showTestimonials = true }: { showTestimonials?: boolean }) {
+  const links = navLinks.filter((l) => showTestimonials || l.href !== "#testimonios");
   const [open, setOpen] = useState(false);
   // Igual que theglobaldelivery.com: transparente arriba, fondo sólido al bajar 40px
   const [scrolled, setScrolled] = useState(false);
@@ -43,7 +44,7 @@ export default function Header() {
         <Logo />
 
         <nav className="hidden gap-8 text-sm font-medium text-neutral-300 md:flex">
-          {navLinks.map((link) => (
+          {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -90,7 +91,7 @@ export default function Header() {
       {open && (
         <div className="border-t border-white/10 bg-neutral-950 px-6 py-5 md:hidden">
           <nav className="flex flex-col gap-1 text-base font-medium text-neutral-300">
-            {navLinks.map((link) => (
+            {links.map((link) => (
               <a
                 key={link.href}
                 href={link.href}

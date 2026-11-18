@@ -30,6 +30,9 @@ export default function AdminHeader() {
           <a href="/admin/ejercicios" className="text-sm text-neutral-300 hover:text-red-500">
             Ejercicios
           </a>
+          <a href="/admin/testimonios" className="text-sm text-neutral-300 hover:text-red-500">
+            Testimonios
+          </a>
           <a href="/admin/contactos" className="text-sm text-neutral-300 hover:text-red-500">
             Contactos
           </a>

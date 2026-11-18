@@ -7,6 +7,7 @@ import { getFoodVisual, getFoodImage } from "@/data/foods";
 import { CATEGORY_ICON } from "@/data/exercises";
 import { loadExercises, type Exercise } from "@/lib/exercise-store";
 import VideoEmbed from "@/components/VideoEmbed";
+import OpinionForm from "@/components/OpinionForm";
 import { normalizePlan, emptyPlan, MEDIDAS, linkLabel, type Plan } from "@/lib/plan";
 
 const tabs = ["Resumen", "Dieta", "Entrenamiento", "Suplementos", "Lista de mercado"] as const;
@@ -364,6 +365,8 @@ export default function PortalPage() {
                 entrenamiento y suplementos que Lamas Fitness te asignó, siempre
                 actualizado.{planLoaded && !hasPlan && " Estamos preparando tu plan: lo verás aquí en cuanto lo asigne."}
               </div>
+
+              {clientName && <OpinionForm fullName={clientName} />}
             </div>
           </div>
         )}

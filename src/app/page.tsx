@@ -6,12 +6,14 @@ import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import { IntroScreen } from "@/components/IntroScreen";
+import { getTestimonials } from "@/lib/testimonials";
 
-export default function Home() {
+export default async function Home() {
+  const hasTestimonials = (await getTestimonials()).length > 0;
   return (
     <>
       <IntroScreen />
-      <Header />
+      <Header showTestimonials={hasTestimonials} />
       <main className="flex-1">
         <Hero />
         <About />
