@@ -2,9 +2,9 @@ import Image from "next/image";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 const highlights = [
-  { label: "Años de experiencia", value: "X+" },
-  { label: "Alumnos entrenados", value: "XX+" },
-  { label: "Certificaciones", value: "X" },
+  { label: "Años de experiencia", value: "5" },
+  { label: "Alumnos entrenados", value: "37+" },
+  { label: "Entrenador certificado y nutricionista", value: "NASM" },
 ];
 
 export default function About() {
@@ -30,8 +30,8 @@ export default function About() {
               Disciplina hoy, resultados mañana
             </h2>
             <p className="text-neutral-600">
-              En Lamas Fitness somos entrenadores personales y llevamos años ayudando a
-              personas a mejorar su condición física con coaching online.
+              En Lamas Fitness somos entrenadores personales certificados por NASM y nutricionistas, con 5 años de experiencia ayudando a
+              más de 37 personas a mejorar su condición física con coaching online.
               Nuestro enfoque combina técnica, constancia y un acompañamiento
               cercano para que cada semana te acerque a tu objetivo, sin
               importar tu punto de partida.

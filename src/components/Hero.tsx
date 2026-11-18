@@ -5,12 +5,27 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative overflow-hidden bg-neutral-950"
+      className="relative isolate flex min-h-[620px] items-center overflow-hidden bg-neutral-950 md:min-h-[780px]"
     >
-      <div className="dot-grid absolute inset-0 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(229,9,20,0.18),_transparent_55%)]" />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-2 md:py-28">
-      <div className="flex flex-col items-start gap-7">
+      {/* Portada: foto principal de fondo, translúcida y fundida con el negro */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-y-0 right-0 w-full overflow-hidden md:w-[68%]">
+          <Image
+            src="/images/alberto-hero.jpg"
+            alt="Lamas Fitness — Personal Trainer"
+            fill
+            priority
+            sizes="(min-width: 768px) 68vw, 100vw"
+            className="hero-cover object-cover object-[70%_0%] opacity-50 md:object-[50%_0%] md:opacity-80"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/85 to-transparent md:via-neutral-950/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-neutral-950/70" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,_rgba(229,9,20,0.25),_transparent_55%)]" />
+        <div className="dot-grid absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_60%_60%_at_20%_0%,black,transparent)]" />
+      </div>
+      <div className="relative mx-auto w-full max-w-6xl px-6 py-24 md:py-32">
+      <div className="flex max-w-xl flex-col items-start gap-7">
         <ScrollReveal delay={100}>
           <span className="inline-flex max-w-full items-center whitespace-nowrap rounded-full border border-red-500/40 bg-red-500/10 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-red-500 sm:px-4 sm:text-xs sm:tracking-widest">
             Coaching y asesoría online
@@ -18,7 +33,7 @@ export default function Hero() {
           </span>
         </ScrollReveal>
         <ScrollReveal delay={220}>
-          <h1 className="max-w-3xl text-5xl font-extrabold leading-[1.05] tracking-tight text-white md:text-5xl lg:text-6xl">
+          <h1 className="max-w-3xl text-5xl font-extrabold leading-[1.05] tracking-tight text-white md:text-6xl">
             Transforma tu cuerpo con un plan{" "}
             <span className="bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
               hecho a tu medida
@@ -49,18 +64,6 @@ export default function Hero() {
           </div>
         </ScrollReveal>
       </div>
-        <ScrollReveal from="right" delay={300}>
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-red-500/30 shadow-2xl shadow-red-600/20">
-            <Image
-              src="/images/alberto-hero.jpg"
-              alt="Lamas Fitness — Personal Trainer"
-              fill
-              priority
-              sizes="(min-width: 768px) 45vw, 90vw"
-              className="object-cover object-[50%_20%]"
-            />
-          </div>
-        </ScrollReveal>
       </div>
     </section>
   );

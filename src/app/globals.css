@@ -128,3 +128,20 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* Portada del Hero: zoom lento tipo "Ken Burns" */
+@keyframes hero-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+.hero-cover { animation: hero-zoom 22s ease-in-out infinite alternate; transform-origin: 70% 0%; }
+@media (prefers-reduced-motion: reduce) { .hero-cover { animation: none; } }
+
+/* Carrusel de testimonios: avanza solo y se pausa al pasar el mouse */
+@keyframes testi-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.testi-track { animation: testi-scroll linear infinite; }
+.group:hover .testi-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .testi-track { animation: none; overflow-x: auto; } }
