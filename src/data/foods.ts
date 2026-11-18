@@ -46,3 +46,52 @@ export function getFoodVisual(name: string): FoodVisual {
   const found = FOOD_KEYWORDS.find((k) => n.includes(k.match));
   return found ?? DEFAULT_FOOD_VISUAL;
 }
+
+// Fotos reales de productos (de la Lista de Mercado de Lamas Fitness). Orden: lo más específico primero.
+const FOOD_IMAGES: { match: string; file: string }[] = [
+  { match: "tilapia", file: "tilapia" },
+  { match: "bacalao", file: "bacalao" },
+  { match: "cod", file: "bacalao" },
+  { match: "mahi", file: "mahi-mahi" },
+  { match: "salmon", file: "salmon" },
+  { match: "camaron", file: "camaron" },
+  { match: "atun", file: "atun" },
+  { match: "pavo", file: "pavo-molido" },
+  { match: "carne molida", file: "carne-molida" },
+  { match: "res", file: "carne-molida" },
+  { match: "pechuga", file: "pechuga" },
+  { match: "muslo", file: "muslos" },
+  { match: "pollo", file: "pechuga" },
+  { match: "huevo", file: "huevos" },
+  { match: "yogur", file: "yogur" },
+  { match: "yogurt", file: "yogur" },
+  { match: "crema de trigo", file: "crema-trigo" },
+  { match: "crema de arroz", file: "crema-arroz" },
+  { match: "galleta", file: "galletas-arroz" },
+  { match: "avena", file: "avena" },
+  { match: "camote", file: "camote" },
+  { match: "batata", file: "camote" },
+  { match: "boniato", file: "camote" },
+  { match: "papa", file: "papas" },
+  { match: "leche", file: "leche-almendra" },
+  { match: "pan", file: "pan" },
+  { match: "barra", file: "barras" },
+  { match: "nuez", file: "nueces" },
+  { match: "nueces", file: "nueces" },
+  { match: "vegetal", file: "vegetales" },
+  { match: "mani", file: "pb2" },
+  { match: "pb2", file: "pb2" },
+  { match: "pasta", file: "pasta" },
+  { match: "espagueti", file: "pasta" },
+  { match: "spaghetti", file: "pasta" },
+];
+
+// Devuelve la ruta de la foto del alimento, o null si no hay (se usa el ícono de respaldo).
+export function getFoodImage(name: string): string | null {
+  const n = normalize(name);
+  const words = n.split(/[^a-z0-9]+/);
+  const found = FOOD_IMAGES.find((k) =>
+    k.match.includes(" ") ? n.includes(k.match) : words.includes(k.match) || words.includes(k.match + "s")
+  );
+  return found ? `/images/foods/${found.file}.jpg` : null;
+}

@@ -88,7 +88,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-6 text-neutral-100">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <p className="text-lg font-bold tracking-tight">ALBERTO LAMAS</p>
+          <p className="text-lg font-bold tracking-tight">LAMAS FITNESS</p>
           <p className="mt-1 text-sm text-neutral-400">
             {mode === "login" ? "Iniciar sesión" : "Crear tu cuenta de cliente"}
           </p>
@@ -99,7 +99,7 @@ export default function LoginPage() {
             type="button"
             onClick={() => switchMode("login")}
             className={`flex-1 rounded-full py-2 text-sm font-semibold transition-colors ${
-              mode === "login" ? "bg-amber-400 text-neutral-950" : "text-neutral-400 hover:text-neutral-100"
+              mode === "login" ? "bg-red-500 text-white" : "text-neutral-400 hover:text-neutral-100"
             }`}
           >
             Iniciar sesión
@@ -108,7 +108,7 @@ export default function LoginPage() {
             type="button"
             onClick={() => switchMode("signup")}
             className={`flex-1 rounded-full py-2 text-sm font-semibold transition-colors ${
-              mode === "signup" ? "bg-amber-400 text-neutral-950" : "text-neutral-400 hover:text-neutral-100"
+              mode === "signup" ? "bg-red-500 text-white" : "text-neutral-400 hover:text-neutral-100"
             }`}
           >
             Crear cuenta
@@ -130,7 +130,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -143,14 +143,14 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
             {error && <p className="text-sm text-red-400">{error}</p>}
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 rounded-full bg-amber-400 px-6 py-3 text-center text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-300 disabled:opacity-60"
+              className="mt-2 rounded-full bg-red-500 px-6 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-red-400 disabled:opacity-60"
             >
               {loading ? "Entrando..." : "Entrar"}
             </button>
@@ -169,7 +169,7 @@ export default function LoginPage() {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -182,7 +182,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -193,7 +193,7 @@ export default function LoginPage() {
                 id="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -207,7 +207,7 @@ export default function LoginPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
               <span className="text-xs text-neutral-500">Mínimo 8 caracteres.</span>
             </div>
@@ -215,7 +215,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 rounded-full bg-amber-400 px-6 py-3 text-center text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-300 disabled:opacity-60"
+              className="mt-2 rounded-full bg-red-500 px-6 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-red-400 disabled:opacity-60"
             >
               {loading ? "Creando cuenta..." : "Crear cuenta"}
             </button>
@@ -224,7 +224,7 @@ export default function LoginPage() {
 
         <a
           href="/"
-          className="mt-6 block text-center text-sm text-neutral-500 hover:text-amber-400"
+          className="mt-6 block text-center text-sm text-neutral-500 hover:text-red-500"
         >
           ← Volver a la web
         </a>

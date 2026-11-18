@@ -39,18 +39,18 @@ export function IntroScreen() {
         pointerEvents: phase === "sliding" ? "none" : "auto",
       }}
     >
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
 
       <span className="intro-logo text-2xl font-bold tracking-tight text-neutral-100">
-        ALBERTO LAMAS
+        LAMAS FITNESS
       </span>
 
       <div className="intro-tagline mt-2 text-[10px] uppercase tracking-[0.5em] text-neutral-500">
-        Entrenador Personal
+        Personal Trainer
       </div>
 
       <div className="relative mt-10 h-[2px] w-44 overflow-hidden rounded-full bg-white/10">
-        <div className="intro-line-bar h-full w-full bg-amber-400" />
+        <div className="intro-line-bar h-full w-full bg-red-500" />
       </div>
 
       <button

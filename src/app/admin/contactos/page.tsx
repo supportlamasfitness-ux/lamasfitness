@@ -64,7 +64,7 @@ export default function ContactosPage() {
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         r.kind === "Cliente"
-                          ? "bg-amber-400/10 text-amber-400"
+                          ? "bg-red-500/10 text-red-500"
                           : "bg-emerald-400/10 text-emerald-400"
                       }`}
                     >

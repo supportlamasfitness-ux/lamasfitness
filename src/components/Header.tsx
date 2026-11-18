@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const navLinks = [
-  { href: "#sobre-mi", label: "Sobre mí" },
+  { href: "#sobre-mi", label: "Nosotros" },
   { href: "#servicios", label: "Servicios" },
   { href: "#testimonios", label: "Testimonios" },
   { href: "#contacto", label: "Contacto" },
@@ -11,12 +11,11 @@ const navLinks = [
 
 function Logo() {
   return (
-    <a href="#top" className="flex items-center gap-2.5">
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-amber-500 text-sm font-black text-neutral-950 shadow-[0_4px_16px_-4px_rgba(251,191,36,0.7)]">
-        AL
-      </span>
-      <span className="text-lg font-bold tracking-tight text-white">
-        ALBERTO LAMAS
+    <a href="#top" className="flex items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/images/logo-lamas.png" alt="Lamas Fitness" className="h-11 w-auto" />
+      <span className="hidden text-lg font-extrabold tracking-tight text-white sm:inline">
+        LAMAS <span className="text-red-500">FITNESS</span>
       </span>
     </a>
   );
@@ -24,9 +23,22 @@ function Logo() {
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  // Igual que theglobaldelivery.com: transparente arriba, fondo sólido al bajar 40px
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-neutral-950/90 backdrop-blur">
+    <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+        scrolled || open
+          ? "border-white/10 bg-neutral-950/90 shadow-lg shadow-black/30 backdrop-blur"
+          : "border-transparent bg-transparent"
+      }`}>
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Logo />
 
@@ -35,7 +47,7 @@ export default function Header() {
             <a
               key={link.href}
               href={link.href}
-              className="transition-colors hover:text-amber-400"
+              className="transition-colors hover:text-red-500"
             >
               {link.label}
             </a>
@@ -45,13 +57,13 @@ export default function Header() {
         <div className="hidden items-center gap-3 md:flex">
           <a
             href="/login"
-            className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-neutral-200 transition-colors hover:border-amber-400 hover:text-amber-400"
+            className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-neutral-200 transition-colors hover:border-red-500 hover:text-red-500"
           >
             Portal de clientes
           </a>
           <a
             href="#contacto"
-            className="rounded-full bg-amber-400 px-5 py-2 text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-300"
+            className="rounded-full bg-red-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-400"
           >
             Reserva tu clase
           </a>
@@ -83,7 +95,7 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 hover:text-amber-400"
+                className="rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 hover:text-red-500"
               >
                 {link.label}
               </a>
@@ -93,14 +105,14 @@ export default function Header() {
             <a
               href="/login"
               onClick={() => setOpen(false)}
-              className="rounded-full border border-white/15 px-4 py-2.5 text-center text-sm font-semibold text-neutral-200 transition-colors hover:border-amber-400 hover:text-amber-400"
+              className="rounded-full border border-white/15 px-4 py-2.5 text-center text-sm font-semibold text-neutral-200 transition-colors hover:border-red-500 hover:text-red-500"
             >
               Portal de clientes
             </a>
             <a
               href="#contacto"
               onClick={() => setOpen(false)}
-              className="rounded-full bg-amber-400 px-5 py-2.5 text-center text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-300"
+              className="rounded-full bg-red-500 px-5 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-red-400"
             >
               Reserva tu clase
             </a>

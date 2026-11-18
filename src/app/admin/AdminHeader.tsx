@@ -18,18 +18,18 @@ export default function AdminHeader() {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <div>
           <p className="text-sm font-bold tracking-tight">Panel de administración</p>
-          <p className="text-xs text-neutral-500">Alberto Lamas — Entrenador Personal</p>
+          <p className="text-xs text-neutral-500">Lamas Fitness — Personal Trainer</p>
         </div>
         <div className="flex items-center gap-3">
-          <a href="/admin/clientes" className="text-sm text-neutral-300 hover:text-amber-400">
+          <a href="/admin/clientes" className="text-sm text-neutral-300 hover:text-red-500">
             Clientes
           </a>
-          <a href="/admin/contactos" className="text-sm text-neutral-300 hover:text-amber-400">
+          <a href="/admin/contactos" className="text-sm text-neutral-300 hover:text-red-500">
             Contactos
           </a>
           <button
             onClick={handleLogout}
-            className="rounded-full border border-white/15 px-4 py-1.5 text-sm font-medium text-neutral-300 transition-colors hover:border-amber-400 hover:text-amber-400"
+            className="rounded-full border border-white/15 px-4 py-1.5 text-sm font-medium text-neutral-300 transition-colors hover:border-red-500 hover:text-red-500"
           >
             Salir
           </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 type Client = {
@@ -18,9 +19,13 @@ export default function ClientesPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [estatura, setEstatura] = useState("");
+  const [talla, setTalla] = useState("");
+  const [peso, setPeso] = useState("");
+  const [edad, setEdad] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [lastCreated, setLastCreated] = useState<{ email: string; tempPassword: string } | null>(null);
+  const [lastCreated, setLastCreated] = useState<{ id: string; email: string; tempPassword: string; warning: string | null } | null>(null);
 
   async function loadClients() {
     setLoading(true);
@@ -47,7 +52,7 @@ export default function ClientesPage() {
     const res = await fetch("/api/admin/clients", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ full_name: fullName, email, phone }),
+      body: JSON.stringify({ full_name: fullName, email, phone, estatura_cm: estatura, talla_ropa: talla, peso, edad }),
     });
     const data = await res.json();
     setSaving(false);
@@ -57,10 +62,11 @@ export default function ClientesPage() {
       return;
     }
 
-    setLastCreated({ email: data.client.email, tempPassword: data.tempPassword });
+    setLastCreated({ id: data.client.id, email: data.client.email, tempPassword: data.tempPassword, warning: data.planWarning });
     setFullName("");
     setEmail("");
     setPhone("");
+    setEstatura(""); setTalla(""); setPeso(""); setEdad("");
     setShowForm(false);
     loadClients();
   }
@@ -71,7 +77,7 @@ export default function ClientesPage() {
         <h1 className="text-xl font-bold">Clientes</h1>
         <button
           onClick={() => setShowForm((v) => !v)}
-          className="rounded-full bg-amber-400 px-5 py-2 text-sm font-semibold text-neutral-950 hover:bg-amber-300"
+          className="rounded-full bg-red-500 px-5 py-2 text-sm font-semibold text-white hover:bg-red-400"
         >
           {showForm ? "Cancelar" : "+ Nuevo cliente"}
         </button>
@@ -92,6 +98,10 @@ export default function ClientesPage() {
           <p className="mt-2 text-xs text-neutral-500">
             Esta contraseña no se vuelve a mostrar — anotala ahora.
           </p>
+          {lastCreated.warning && <p className="mt-2 text-xs text-red-400">{lastCreated.warning}</p>}
+          <Link href={`/admin/clientes/${lastCreated.id}`} className="mt-3 inline-block rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-500">
+            Asignar su plan ahora
+          </Link>
         </div>
       )}
 
@@ -107,7 +117,7 @@ export default function ClientesPage() {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -117,7 +127,7 @@ export default function ClientesPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -125,15 +135,30 @@ export default function ClientesPage() {
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-amber-400"
+                className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
               />
             </div>
+            {([
+              ["Estatura (cm)", estatura, setEstatura],
+              ["Talla de ropa (S, M, L…)", talla, setTalla],
+              ["Peso inicial (kg)", peso, setPeso],
+              ["Edad", edad, setEdad],
+            ] as const).map(([label, val, set]) => (
+              <div key={label} className="flex flex-col gap-1">
+                <label className="text-sm text-neutral-300">{label}</label>
+                <input
+                  value={val}
+                  onChange={(e) => set(e.target.value)}
+                  className="rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500"
+                />
+              </div>
+            ))}
           </div>
           {error && <p className="text-sm text-red-400">{error}</p>}
           <button
             type="submit"
             disabled={saving}
-            className="w-fit rounded-full bg-amber-400 px-6 py-2 text-sm font-semibold text-neutral-950 hover:bg-amber-300 disabled:opacity-60"
+            className="w-fit rounded-full bg-red-500 px-6 py-2 text-sm font-semibold text-white hover:bg-red-400 disabled:opacity-60"
           >
             {saving ? "Creando..." : "Crear cliente"}
           </button>
@@ -153,6 +178,7 @@ export default function ClientesPage() {
                 <th className="px-5 py-3">Email</th>
                 <th className="px-5 py-3">Teléfono</th>
                 <th className="px-5 py-3">Alta</th>
+                <th className="px-5 py-3"></th>
               </tr>
             </thead>
             <tbody>
@@ -163,6 +189,11 @@ export default function ClientesPage() {
                   <td className="px-5 py-3 text-neutral-400">{c.phone || "—"}</td>
                   <td className="px-5 py-3 text-neutral-500">
                     {new Date(c.created_at).toLocaleDateString("es")}
+                  </td>
+                  <td className="px-5 py-3 text-right">
+                    <Link href={`/admin/clientes/${c.id}`} className="rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-500">
+                      Asignar plan
+                    </Link>
                   </td>
                 </tr>
               ))}

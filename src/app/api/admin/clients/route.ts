@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { emptyPlan, emptyMedicion } from "@/lib/plan";
 
 function randomPassword() {
   // 12 caracteres, suficiente para una contraseña temporal que el cliente
@@ -57,8 +58,26 @@ export async function POST(request: Request) {
     );
   }
 
+  // Datos iniciales que carga el admin al crear la cuenta (estatura, talla, peso): son el punto de
+  // partida real del resumen del cliente. Si la tabla client_plans aún no existe, no se rompe el alta.
+  const t = (v: unknown) => String(v ?? "").trim();
+  const estatura = t(body.estatura_cm), talla = t(body.talla_ropa), peso = t(body.peso), edad = t(body.edad);
+  let planWarning: string | null = null;
+  if (estatura || talla || peso || edad) {
+    const plan = emptyPlan();
+    plan.perfil.estatura_cm = estatura;
+    plan.perfil.talla_ropa = talla;
+    plan.perfil.edad = edad;
+    if (peso) plan.mediciones.push({ ...emptyMedicion(), peso });
+    const { error: planError } = await admin
+      .from("client_plans")
+      .upsert({ client_id: created.user.id, data: plan, updated_at: new Date().toISOString() });
+    if (planError) planWarning = "Cuenta creada, pero no se guardaron los datos iniciales: " + planError.message;
+  }
+
   return NextResponse.json({
     client: { id: created.user.id, full_name, email, phone },
     tempPassword,
+    planWarning,
   });
 }

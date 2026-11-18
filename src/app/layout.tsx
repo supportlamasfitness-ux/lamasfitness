@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Alberto Lamas | Entrenador Personal",
+  title: "Lamas Fitness | Coaching Online",
   description:
-    "Clases presenciales de entrenamiento personal en Austin. Acompañamiento cercano para que alcances tus objetivos.",
+    "Coaching y asesoría de entrenamiento online. Plan personalizado y acompañamiento cercano para que alcances tus objetivos.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

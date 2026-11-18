@@ -12,4 +12,4 @@ export function getResend() {
 // una vez que lamasfitness.com esté verificado en Resend, esto pasa a
 // "Alberto Lamas <hola@lamasfitness.com>" (o el remitente que se prefiera).
 export const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS || "Alberto Lamas <onboarding@resend.dev>";
+  process.env.RESEND_FROM_ADDRESS || "Lamas Fitness <onboarding@resend.dev>";

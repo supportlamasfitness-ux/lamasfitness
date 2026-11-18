@@ -19,9 +19,9 @@ const testimonials = [
 ];
 
 const avatarGradients = [
-  "from-amber-400 to-orange-500",
+  "from-red-500 to-orange-500",
   "from-orange-400 to-rose-500",
-  "from-amber-500 to-yellow-300",
+  "from-red-600 to-yellow-300",
 ];
 
 function initials(name: string) {
@@ -39,7 +39,7 @@ export default function Testimonials() {
       <div className="mx-auto max-w-6xl px-6 py-24">
         <ScrollReveal>
           <div className="mx-auto max-w-2xl text-center">
-            <span className="eyebrow text-amber-600">Testimonios</span>
+            <span className="eyebrow text-red-600">Testimonios</span>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl">
               Lo que dicen mis alumnos
             </h2>

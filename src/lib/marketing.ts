@@ -40,16 +40,16 @@ export async function addContact({ email, full_name, source }: AddContactInput) 
       to: email,
       subject:
         source === "client_signup"
-          ? "¡Bienvenido/a a tu portal, Alberto Lamas Fitness!"
-          : "Gracias por sumarte — Alberto Lamas Fitness",
+          ? "¡Bienvenido/a a tu portal, Lamas Fitness!"
+          : "Gracias por sumarte — Lamas Fitness",
       html:
         source === "client_signup"
           ? `<p>Hola${full_name ? " " + full_name.split(" ")[0] : ""},</p>
              <p>Tu cuenta ya está activa. Entrá a tu portal cuando quieras para ver tu plan asignado.</p>
-             <p>— Alberto Lamas</p>`
+             <p>— Equipo Lamas Fitness</p>`
           : `<p>Hola${full_name ? " " + full_name.split(" ")[0] : ""},</p>
-             <p>Gracias por sumarte. De acá en más vas a recibir tips de entrenamiento, nutrición y promociones de clases presenciales en Austin.</p>
-             <p>— Alberto Lamas</p>`,
+             <p>Gracias por sumarte. De acá en más vas a recibir tips de entrenamiento, nutrición y promociones de coaching online.</p>
+             <p>— Equipo Lamas Fitness</p>`,
     });
   } catch (e) {
     console.error("[marketing] Resend falló (no bloquea el flujo):", (e as Error).message);
