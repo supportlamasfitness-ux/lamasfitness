@@ -233,14 +233,14 @@ export default function PortalPage() {
 
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100">
+    <div className="min-h-dvh bg-neutral-950 text-neutral-100">
       <header className="border-b border-white/10 bg-neutral-950/80 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:px-6 sm:py-4">
           <div>
             <p className="text-sm font-bold tracking-tight">Portal de Lamas Fitness</p>
             <p className="text-xs text-neutral-500">Tu plan, asignado por tu entrenador</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="hidden text-sm text-neutral-300 sm:inline">
               {clientName || "Cargando…"}
             </span>
@@ -263,7 +263,7 @@ export default function PortalPage() {
             </button>
           </div>
         </div>
-        <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-6 pb-2 text-sm">
+        <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 pb-2 text-sm sm:px-6">
           {tabs.map((t) => (
             <button
               key={t}
@@ -280,7 +280,7 @@ export default function PortalPage() {
         </nav>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-10">
+      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-10">
         {tab === "Resumen" && (
           <div className="relative overflow-hidden rounded-3xl">
             <GoldParticles />
@@ -528,7 +528,31 @@ export default function PortalPage() {
         ))}
 
         {tab === "Suplementos" && (supplements.length === 0 ? empty("suplementos") : (
-          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-neutral-900">
+          <>
+          <div className="flex flex-col gap-3 md:hidden">
+            {supplements.map((s, k) => (
+              <div key={k} className="rounded-2xl border border-white/10 bg-neutral-900 p-4 text-sm">
+                <div className="flex items-center gap-3">
+                  {s.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={s.image} alt={s.name} loading="lazy" className="h-14 w-14 shrink-0 rounded-lg bg-neutral-100 object-contain p-0.5" />
+                  ) : (
+                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-lg">💊</span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="font-semibold">{s.name}</p>
+                    {s.url && <span className="mt-1 block"><BuyLink url={s.url} /></span>}
+                  </div>
+                </div>
+                <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-neutral-300">
+                  {s.dose && <div><dt className="text-xs text-neutral-500">Dosis</dt><dd>{s.dose}</dd></div>}
+                  {s.when && <div><dt className="text-xs text-neutral-500">Cuándo</dt><dd>{s.when}</dd></div>}
+                  {s.purpose && <div className="col-span-2"><dt className="text-xs text-neutral-500">Para qué sirve</dt><dd className="text-neutral-400">{s.purpose}</dd></div>}
+                </dl>
+              </div>
+            ))}
+          </div>
+          <div className="hidden overflow-x-auto rounded-2xl border border-white/10 bg-neutral-900 md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-neutral-500">
                 <tr>
@@ -563,6 +587,7 @@ export default function PortalPage() {
               </tbody>
             </table>
           </div>
+          </>
         ))}
 
         {tab === "Lista de mercado" && (

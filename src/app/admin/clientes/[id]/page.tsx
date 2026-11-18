@@ -231,7 +231,7 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
               <div className="flex flex-col gap-2">
                 {d.exercises.map((ex, xi) => (
                   <div key={xi} className="flex flex-col gap-2">
-                  <div className="grid grid-cols-[1fr_140px_32px] gap-2">
+                  <div className="grid grid-cols-[1fr_32px] gap-2 sm:grid-cols-[1fr_140px_32px]">
                     <select className={input} value={ex.exerciseId}
                       onChange={(e) => edit((p) => {
                         const row = p.entrenamiento[di].exercises[xi];
@@ -248,7 +248,7 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
                         </optgroup>
                       ))}
                     </select>
-                    <input className={input} placeholder="4 x 12" value={ex.sets}
+                    <input className={`${input} order-3 col-span-2 sm:order-none sm:col-span-1`} placeholder="4 x 12" value={ex.sets}
                       onChange={(e) => edit((p) => { p.entrenamiento[di].exercises[xi].sets = e.target.value; })} />
                     <button className="text-neutral-500 hover:text-red-500" aria-label="Quitar ejercicio"
                       onClick={() => edit((p) => { p.entrenamiento[di].exercises.splice(xi, 1); })}>✕</button>
@@ -338,8 +338,8 @@ export default function ClientePlanPage({ params }: { params: Promise<{ id: stri
 
       {picker && <CatalogPicker kind={picker.kind} onPick={picker.apply} onClose={() => setPicker(null)} />}
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-neutral-950/95 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
+      <div className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-neutral-950/95 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <span className="text-xs text-neutral-500">
             {error ? <span className="text-red-400">{error}</span>
               : dirty ? "Cambios sin guardar"

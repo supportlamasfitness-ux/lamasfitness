@@ -40,7 +40,7 @@ function Row({ item, onSaved, onDeleted }: { item: CatalogItem; onSaved: (i: Cat
       </div>
       <input className={input} placeholder="Enlace de compra (Amazon, Walmart…)" value={d.url} onChange={(e) => set("url", e.target.value)} />
       {d.kind === "alimento" ? (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {([["kcal", "kcal"], ["protein", "Proteína g"], ["carbs", "Carbs g"], ["fat", "Grasa g"]] as const).map(([k, ph]) => (
             <input key={k} className={input} inputMode="decimal" placeholder={ph} value={d[k] ?? ""} onChange={(e) => set(k, numOrNull(e.target.value))} />
           ))}

@@ -64,7 +64,7 @@ export default function ResetPasswordPage() {
   const field = "rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-sm outline-none focus:border-red-500";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-6 text-neutral-100">
+    <div className="flex min-h-dvh items-center justify-center bg-neutral-950 px-6 text-neutral-100">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <p className="text-lg font-bold tracking-tight">LAMAS FITNESS</p>

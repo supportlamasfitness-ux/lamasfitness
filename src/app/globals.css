@@ -149,3 +149,10 @@ html {
 /* Evita scroll horizontal por animaciones de entrada (translateX) o elementos que se salen */
 html, body { overflow-x: clip; max-width: 100%; }
 img, video, iframe { max-width: 100%; }
+
+/* Móvil: evita el zoom automático de iOS al enfocar un campo (letra < 16px), ajuste de texto y zonas seguras */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+@media (max-width: 640px) {
+  input, select, textarea { font-size: 16px !important; }
+}
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }

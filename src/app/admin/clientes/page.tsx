@@ -184,7 +184,21 @@ export default function ClientesPage() {
         </form>
       )}
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-neutral-900">
+      <div className="flex flex-col gap-3 md:hidden">
+        {clients.map((c) => (
+          <div key={c.id} className="rounded-2xl border border-white/10 bg-neutral-900 p-4 text-sm">
+            <p className="font-semibold">{c.full_name}</p>
+            <p className="break-all text-neutral-300">{c.email}</p>
+            <p className="text-xs text-neutral-500">{c.phone || "Sin teléfono"} · alta {new Date(c.created_at).toLocaleDateString("es")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link href={`/admin/clientes/${c.id}`} className="rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-500">Asignar plan</Link>
+              <button onClick={() => resetPassword(c)} className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-neutral-300 hover:border-red-500 hover:text-red-500">Restablecer contraseña</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-2xl border border-white/10 bg-neutral-900 md:block">
         {loading ? (
           <p className="p-6 text-sm text-neutral-500">Cargando...</p>
         ) : clients.length === 0 ? (
