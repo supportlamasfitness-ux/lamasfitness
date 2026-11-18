@@ -145,3 +145,7 @@ html {
 .testi-track { animation: testi-scroll linear infinite; }
 .group:hover .testi-track { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .testi-track { animation: none; overflow-x: auto; } }
+
+/* Evita scroll horizontal por animaciones de entrada (translateX) o elementos que se salen */
+html, body { overflow-x: clip; max-width: 100%; }
+img, video, iframe { max-width: 100%; }

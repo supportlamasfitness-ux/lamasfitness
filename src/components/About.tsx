@@ -14,7 +14,7 @@ export default function About() {
         <ScrollReveal from="left">
           <div className="relative aspect-square w-full overflow-hidden rounded-3xl shadow-2xl shadow-neutral-900/10 md:aspect-[4/5]">
             <Image
-              src="/images/alberto-hero.jpg"
+              src="/images/lamas-hero.jpg"
               alt="Lamas Fitness — Personal Trainer"
               fill
               sizes="(min-width: 768px) 40vw, 90vw"

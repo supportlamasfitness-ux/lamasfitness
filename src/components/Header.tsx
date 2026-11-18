@@ -14,7 +14,7 @@ function Logo() {
     <a href="#top" className="flex items-center gap-3">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/images/logo-lamas.png" alt="Lamas Fitness" className="h-11 w-auto" />
-      <span className="hidden text-lg font-extrabold tracking-tight text-white sm:inline">
+      <span className="hidden whitespace-nowrap text-lg font-extrabold tracking-tight text-white sm:inline">
         LAMAS <span className="text-red-500">FITNESS</span>
       </span>
     </a>
@@ -43,7 +43,7 @@ export default function Header({ showTestimonials = true }: { showTestimonials?:
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Logo />
 
-        <nav className="hidden gap-8 text-sm font-medium text-neutral-300 md:flex">
+        <nav className="hidden gap-8 text-sm font-medium text-neutral-300 lg:flex">
           {links.map((link) => (
             <a
               key={link.href}
@@ -55,16 +55,16 @@ export default function Header({ showTestimonials = true }: { showTestimonials?:
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           <a
             href="/login"
-            className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-neutral-200 transition-colors hover:border-red-500 hover:text-red-500"
+            className="whitespace-nowrap rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-neutral-200 transition-colors hover:border-red-500 hover:text-red-500"
           >
             Portal de clientes
           </a>
           <a
             href="#contacto"
-            className="rounded-full bg-red-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-400"
+            className="whitespace-nowrap rounded-full bg-red-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-400"
           >
             Empieza ahora
           </a>
@@ -74,7 +74,7 @@ export default function Header({ showTestimonials = true }: { showTestimonials?:
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-200 md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-200 lg:hidden"
         >
           {open ? (
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -89,7 +89,7 @@ export default function Header({ showTestimonials = true }: { showTestimonials?:
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-neutral-950 px-6 py-5 md:hidden">
+        <div className="border-t border-white/10 bg-neutral-950 px-6 py-5 lg:hidden">
           <nav className="flex flex-col gap-1 text-base font-medium text-neutral-300">
             {links.map((link) => (
               <a

@@ -11,12 +11,12 @@ export default function Hero() {
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-y-0 right-0 w-full overflow-hidden md:w-[68%]">
           <Image
-            src="/images/alberto-hero.jpg"
+            src="/images/lamas-hero.jpg"
             alt="Lamas Fitness — Personal Trainer"
             fill
             priority
             sizes="(min-width: 768px) 68vw, 100vw"
-            className="hero-cover object-cover object-[70%_0%] opacity-50 md:object-[50%_0%] md:opacity-80"
+            className="hero-cover object-cover object-[46%_0%] opacity-50 md:object-[50%_0%] md:opacity-80"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/85 to-transparent md:via-neutral-950/70" />
