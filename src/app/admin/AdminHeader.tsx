@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import ChangePassword from "@/components/ChangePassword";
 
 export default function AdminHeader() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function AdminHeader() {
           <a href="/admin/contactos" className="text-sm text-neutral-300 hover:text-red-500">
             Contactos
           </a>
+          <ChangePassword />
           <button
             onClick={handleLogout}
             className="rounded-full border border-white/15 px-4 py-1.5 text-sm font-medium text-neutral-300 transition-colors hover:border-red-500 hover:text-red-500"

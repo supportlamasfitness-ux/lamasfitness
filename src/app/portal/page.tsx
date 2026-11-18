@@ -8,6 +8,7 @@ import { CATEGORY_ICON } from "@/data/exercises";
 import { loadExercises, type Exercise } from "@/lib/exercise-store";
 import VideoEmbed from "@/components/VideoEmbed";
 import OpinionForm from "@/components/OpinionForm";
+import ChangePassword from "@/components/ChangePassword";
 import { normalizePlan, emptyPlan, MEDIDAS, linkLabel, type Plan } from "@/lib/plan";
 
 const tabs = ["Resumen", "Dieta", "Entrenamiento", "Suplementos", "Lista de mercado"] as const;
@@ -253,6 +254,7 @@ export default function PortalPage() {
                     .toUpperCase()
                 : "…"}
             </div>
+            <ChangePassword />
             <button
               onClick={handleLogout}
               className="rounded-full border border-white/15 px-4 py-1.5 text-sm font-medium text-neutral-300 transition-colors hover:border-red-500 hover:text-red-500"
